@@ -2,8 +2,8 @@ const hre = require("hardhat");
 
 async function main() {
   
-  const Oracle = await hre.ethers.getContractFactory("");
-  const oracle= await oracle.deploy();
+  const Oracle = await hre.ethers.getContractFactory("oracle");
+  const oracle= await Oracle.deploy();
   await oracle.deployed();
 
   const Consumer = await hre.ethers.getContractFactory("ATestnetConsumer");
