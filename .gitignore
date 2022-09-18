@@ -1,1 +1,3 @@
 .chainlink-goerli/.env
+.chainlink-goerli/chainlink-volume/password.txt
+.chainlink-goerli/chainlink-volume/apicredentials.txt
