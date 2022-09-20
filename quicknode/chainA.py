@@ -1,21 +1,19 @@
 from web3 import Web3
 import asyncio
+import pandas as pd
 
 web3 = Web3(Web3.HTTPProvider("https://proportionate-multi-bridge.ethereum-goerli.discover.quiknode.pro/9b4b638c50c22e1da66f9652053a61e0c69beda3/"))
 
 
 #Goerli 
 PoolDataProvider_Aave  = "0x9BE876c6DC42215B00d7efe892E2691C3bc35d10"
-
-
-#Check only txs going to Router:
 DataProvider_Aave = web3.toChecksumAddress(PoolDataProvider_Aave)
 dataProvider = web3.eth.contract(address = DataProvider_Aave)
+
 
 def get_balance():
     # print(web3.clientVersion)
     balance = web3.eth.get_balance(PoolDataProvider_Aave)
-    print(f"Balance of Pool Data Provider Aave is : {balance}")
 
     
 def get_function(input: str, event) :
@@ -30,8 +28,10 @@ def handle_event(event):
         # receipt = web3.eth.get_transaction_receipt(getTrans) #Look up tx receipts 
         # print(receipt)
         # to = trans['to']
-        data = trans['maxFeePerGas']
-        print(data)
+        data = trans
+        # print(data)
+        df = pd.DataFrame(data=data, columns = ['from'])
+        print(df)
     except Exception as e:
         print(f'error occured {e}')
     
