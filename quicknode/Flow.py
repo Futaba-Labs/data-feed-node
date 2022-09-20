@@ -4,8 +4,8 @@ import asyncio
 import json
 
 # Params 
-web3_goerli = Web3(Web3.HTTPProvider("https://eth-goerli.g.alchemy.com/v2/iF_FH5ImUM5oCWOKpzv1nHha0Q2iD8Ss"), request_kwargs={'timeout': 60})
-web3_polygon = Web3(Web3.HTTPProvider('https://polygon-mumbai.g.alchemy.com/v2/NGauPEJAYB84xVdGHaT_mRVTDE-enCr7'))
+web3_goerli = Web3(Web3.HTTPProvider("https://eth-goerli.g.alchemy.com/v2/<>"), request_kwargs={'timeout': 60})
+web3_polygon = Web3(Web3.HTTPProvider('https://polygon-mumbai.g.alchemy.com/v2/<>'))
 
 #1. Catch specific events via node provider of polygon testnet
 PoolDataProvider_Aave  = "0x9BE876c6DC42215B00d7efe892E2691C3bc35d10"
