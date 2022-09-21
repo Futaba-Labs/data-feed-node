@@ -18,7 +18,6 @@ dataProvider = web3_optimism.eth.contract(address = PoolDataProvider_Aave, abi=a
 
 #Optimism 
 def contract_transaction():
-    # DataProvider_Aave = web3_optimism.toChecksumAddress(PoolDataProvider_Aave)
     usdc_address = "0x7F5c764cBc14f9669B88837ca1490cCa17c31607"
     tx = dataProvider.functions.getReserveEModeCategory(usdc_address)
     print(tx)
@@ -73,9 +72,6 @@ if __name__ == '__main__':
     # check_provider(web3_polygon)
     
     
-
-
-#3. Encode the data
 
 
 #4. Switch to goerli's node provider
