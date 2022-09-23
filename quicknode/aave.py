@@ -1,17 +1,13 @@
 from getABI import convert_abi_from_api
 from web3 import Web3 
 import asyncio
-import json 
 from web3.middleware import geth_poa_middleware
 from eth_account.messages import encode_defunct
 from eth_account import Account
+from eth_abi import encode
 
-
-
-web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/<token>"))
+web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/bjsw4mIncmXszy3-UoYdPnvlQb6b6Wep"))
 web3_optimism.middleware_onion.inject(geth_poa_middleware, layer=0)
-
-
 
 OPTIMISM_REGISTRY_CONTRACT = "0x794a61358D6845594F94dc1DB02A252b5b4814aD"
 api_pool = "http://api-optimistic.etherscan.io/api?module=contract&action=getabi&address=0x270d4c1b6f0bb172a9fd628e29530ca484190013&format=raw"
@@ -49,13 +45,15 @@ async def log_loop(event_filter, poll_interval):
     event_filter = contract_aave.events.ReserveDataUpdated.createFilter(fromBlock= number )
     while True:
         for ReserveDataUpdated in event_filter.get_new_entries():
-            timestamp = block['timestamp']
+            timestamp = str(block['timestamp'])
             liquidityRate = ReserveDataUpdated['args']['liquidityRate']
             liquidity = int(web3_optimism.fromWei(liquidityRate, 'ether'))
+            # liquidity = str(liquidity)
             # print (f"LiquidityRate : {web3_optimism.fromWei(liquidityRate, 'ether') }")
             # print(f"Timestamp : {timestamp}")
-            
-            return liquidity, timestamp
+            liquidityR = encode(['uint256'], [liquidity])
+
+            return liquidityR, timestamp 
 
             
             # data_acquired = web3_optimism.fromWei(liquidityRate, 'ether')
@@ -67,9 +65,10 @@ async def get_data():
     block = web3_optimism.eth.get_block(last_block_number)
     number = block['number']
     event_filter = contract_aave.events.ReserveDataUpdated.createFilter(fromBlock= number )
-    #opens loop
     data_acquisition = await asyncio.gather(log_loop(event_filter, 2))
     print(data_acquisition)
+
+    
     
     
 # ------------------ ENCODING --------------------- 
