@@ -6,7 +6,7 @@ from eth_account.messages import encode_defunct
 from eth_account import Account
 from eth_abi import encode
 
-web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/bjsw4mIncmXszy3-UoYdPnvlQb6b6Wep"))
+web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/<>"))
 web3_optimism.middleware_onion.inject(geth_poa_middleware, layer=0)
 
 OPTIMISM_REGISTRY_CONTRACT = "0x794a61358D6845594F94dc1DB02A252b5b4814aD"
@@ -37,6 +37,21 @@ def get_last_block_number():
     last_block_number = web3_optimism.eth.block_number
     return last_block_number
 
+
+
+def encoding():
+    
+    liquidity_encoded = encode(['uint256'], [2302323])
+    liquidity_name = encode(['string'], ['liquidityRate'])
+    timestamp = 20000
+    feeds = (liquidity_name , liquidity_encoded, timestamp)
+    # print(feeds)
+    
+    e = encode(['(bytes,bytes,uint256)'], [feeds])
+    print(e)
+
+    
+
 #Coroutine
 async def log_loop(event_filter, poll_interval):
     last_block_number = get_last_block_number()
@@ -45,19 +60,33 @@ async def log_loop(event_filter, poll_interval):
     event_filter = contract_aave.events.ReserveDataUpdated.createFilter(fromBlock= number )
     while True:
         for ReserveDataUpdated in event_filter.get_new_entries():
-            timestamp = str(block['timestamp'])
+            timestamp = block['timestamp']
             liquidityRate = ReserveDataUpdated['args']['liquidityRate']
             liquidity = int(web3_optimism.fromWei(liquidityRate, 'ether'))
             # liquidity = str(liquidity)
             # print (f"LiquidityRate : {web3_optimism.fromWei(liquidityRate, 'ether') }")
             # print(f"Timestamp : {timestamp}")
-            liquidityR = encode(['uint256'], [liquidity])
+            liquidity_encoded = encode(['uint256'], [liquidity])
+            # liquidity_name = encode(['string'], ['liquidityRate'])
+            liquidity_name = 'liquidityRate'
+            
+            #Encode array 
+            feeds = [(liquidity_name , liquidity_encoded, timestamp)]
+            e = encode(['(string,bytes,uint256)[]'], [feeds])
+            # print(e)
+            
+            #Hash
+            hash = str(web3_optimism.solidityKeccak(['bytes'], ['0x' + e.hex()]))
+            print(hash)
+            
 
-            return liquidityR, timestamp 
+            pair = create_account()
+            encoded = encode_defunct(text = hash)
+            signed_message = web3_optimism.eth.account.sign_message(encoded, private_key=pair[1])
+            print(signed_message)
+            return signed_message
 
             
-            # data_acquired = web3_optimism.fromWei(liquidityRate, 'ether')
-            # return data_acquired
 
         
 async def get_data():
@@ -66,11 +95,9 @@ async def get_data():
     number = block['number']
     event_filter = contract_aave.events.ReserveDataUpdated.createFilter(fromBlock= number )
     data_acquisition = await asyncio.gather(log_loop(event_filter, 2))
-    print(data_acquisition)
+    # print(data_acquisition)
 
-    
-    
-    
+        
 # ------------------ ENCODING --------------------- 
 
 def create_account() -> list():
@@ -99,6 +126,7 @@ if __name__ == "__main__":
     # event_filter = contract_aave.events.ReserveDataUpdated.createFilter(fromBlock='pending')
     # asyncio.run(log_loop(event_filter, 2))
     asyncio.run(get_data())
+
 
  
 
