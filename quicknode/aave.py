@@ -6,12 +6,12 @@ from eth_account.messages import encode_defunct
 from eth_account import Account
 from eth_abi import encode
 
-web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/"))
-web3_mumbai = Web3(Web3.HTTPProvider("https://polygon-mumbai.g.alchemy.com/v2/"))
+web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/bjsw4mIncmXszy3-UoYdPnvlQb6b6Wep"))
+web3_mumbai = Web3(Web3.HTTPProvider("https://polygon-mumbai.g.alchemy.com/v2/eXWIi7Ku5cbVWKDb6IcY9bIyJfMkxv9R"))
 web3_optimism.middleware_onion.inject(geth_poa_middleware, layer=0)
 web3_mumbai.middleware_onion.inject(geth_poa_middleware, layer=0)
 
-DB_MUMBAI = "0x105990E8EbCd11F065304fB1Db79889176B24AFA"
+DB_MUMBAI = "0xd737408b3CE7c6559496ea0cAde16A951945356b"
 
 
 
@@ -61,7 +61,7 @@ def encoding():
     signed_message = web3_optimism.eth.account.sign_message(encoded, private_key=pair[1])
     signature = signed_message.signature.hex()
     # data = encode(['string'], [signature])
-    priv = ""
+    priv = "5034f6fc81f0fb42429875413da341faf69888122913159b2aa15d3e98f37bb9"
     # pair = create_account()
     nonce = web3_mumbai.eth.getTransactionCount("0xA071F1BC494507aeF4bc5038B8922641c320d486")
     print(nonce)
@@ -106,8 +106,8 @@ async def log_loop(event_filter, poll_interval):
             liquidity_name = 'liquidityRate'
             
             #Encode array 
-            feeds = [(liquidity_name , liquidity_encoded, timestamp)]
-            e = encode(['(string,bytes,uint256)[]'], [feeds])
+            feeds = [(liquidity_name ,timestamp, liquidity_encoded)]
+            e = encode(['(string,uint256,bytes)[]'], [feeds])
             
             #Hash
             hash = str(web3_optimism.solidityKeccak(['bytes'], ['0x' + e.hex()]))
@@ -120,7 +120,8 @@ async def log_loop(event_filter, poll_interval):
             print( "--------------------------------------------------" )
             signature = signed_message.signature.hex()
             print(f"Signaure is signature is : {signature}")
-            return signature
+            return {"signature" : signature, "data_encoded" : e}
+        
 
             
         
@@ -128,11 +129,14 @@ async def get_data():
     last_block_number = get_last_block_number()
     block = web3_optimism.eth.get_block(last_block_number)
     number = block['number']
+    timestamp = block['timestamp']
     event_filter = contract_aave.events.ReserveDataUpdated.createFilter(fromBlock= number )
     data_acquisition = await asyncio.gather(log_loop(event_filter, 2))
     data = data_acquisition[0]
-    priv = ""
-    # pair = create_account()
+    array_encoded = data["data_encoded"]
+    signature = data["signature"]
+    
+    pair = create_account()
     nonce = web3_mumbai.eth.getTransactionCount("0xA071F1BC494507aeF4bc5038B8922641c320d486")
     print(nonce)
     tx = {
@@ -142,8 +146,10 @@ async def get_data():
         'maxPriorityFeePerGas' : 3815333382,
         'gas' : 100000,
         'to' : DB_MUMBAI,
-        'value' : 60000000000000000,
-        'data': data,
+        'value' : 6000000000000000,
+        # 'signature': signature,
+        # 'timestamp': timestamp,
+        'data': array_encoded,
         'chainId' : 80001
     }                   
                                         
