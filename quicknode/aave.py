@@ -6,8 +6,14 @@ from eth_account.messages import encode_defunct
 from eth_account import Account
 from eth_abi import encode
 
-web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/<>"))
+web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/"))
+web3_mumbai = Web3(Web3.HTTPProvider("https://polygon-mumbai.g.alchemy.com/v2/"))
 web3_optimism.middleware_onion.inject(geth_poa_middleware, layer=0)
+web3_mumbai.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+DB_MUMBAI = "0x105990E8EbCd11F065304fB1Db79889176B24AFA"
+
+
 
 OPTIMISM_REGISTRY_CONTRACT = "0x794a61358D6845594F94dc1DB02A252b5b4814aD"
 api_pool = "http://api-optimistic.etherscan.io/api?module=contract&action=getabi&address=0x270d4c1b6f0bb172a9fd628e29530ca484190013&format=raw"
@@ -48,7 +54,36 @@ def encoding():
     # print(feeds)
     
     e = encode(['(bytes,bytes,uint256)'], [feeds])
-    print(e)
+    hash = str(web3_optimism.solidityKeccak(['bytes'], ['0x' + e.hex()])) 
+    #Sign message
+    pair = create_account()
+    encoded = encode_defunct(text = hash)
+    signed_message = web3_optimism.eth.account.sign_message(encoded, private_key=pair[1])
+    signature = signed_message.signature.hex()
+    # data = encode(['string'], [signature])
+    priv = ""
+    # pair = create_account()
+    nonce = web3_mumbai.eth.getTransactionCount("0xA071F1BC494507aeF4bc5038B8922641c320d486")
+    print(nonce)
+    tx = {
+        'from' : "0xA071F1BC494507aeF4bc5038B8922641c320d486",
+        'nonce' : nonce,
+        'maxFeePerGas' : 2000000000,
+        'maxPriorityFeePerGas' : 1000000000,
+        'gas' : 100000,
+        'to' : DB_MUMBAI,
+        'value' : 2000000000,
+        'data': signature,
+        'chainId' : 80001
+    }                   
+                                        
+    signed_tx = web3_mumbai.eth.account.sign_transaction(tx, priv)
+    print(signed_tx)
+    tx_hash = web3_mumbai.eth.sendRawTransaction(signed_tx.rawTransaction)
+    print(tx_hash)
+    
+    #get transaction hash
+    print(web3_mumbai.toHex(tx_hash))
 
     
 
@@ -73,21 +108,21 @@ async def log_loop(event_filter, poll_interval):
             #Encode array 
             feeds = [(liquidity_name , liquidity_encoded, timestamp)]
             e = encode(['(string,bytes,uint256)[]'], [feeds])
-            # print(e)
             
             #Hash
             hash = str(web3_optimism.solidityKeccak(['bytes'], ['0x' + e.hex()]))
-            print(hash)
             
-
+            #Sign message
             pair = create_account()
             encoded = encode_defunct(text = hash)
             signed_message = web3_optimism.eth.account.sign_message(encoded, private_key=pair[1])
             print(signed_message)
-            return signed_message
+            print( "--------------------------------------------------" )
+            signature = signed_message.signature.hex()
+            print(f"Signaure is signature is : {signature}")
+            return signature
 
             
-
         
 async def get_data():
     last_block_number = get_last_block_number()
@@ -95,7 +130,32 @@ async def get_data():
     number = block['number']
     event_filter = contract_aave.events.ReserveDataUpdated.createFilter(fromBlock= number )
     data_acquisition = await asyncio.gather(log_loop(event_filter, 2))
-    # print(data_acquisition)
+    data = data_acquisition[0]
+    priv = ""
+    # pair = create_account()
+    nonce = web3_mumbai.eth.getTransactionCount("0xA071F1BC494507aeF4bc5038B8922641c320d486")
+    print(nonce)
+    tx = {
+        'from' : "0xA071F1BC494507aeF4bc5038B8922641c320d486",
+        'nonce' : nonce,
+        'maxFeePerGas' : 3815333396 ,
+        'maxPriorityFeePerGas' : 3815333382,
+        'gas' : 100000,
+        'to' : DB_MUMBAI,
+        'value' : 60000000000000000,
+        'data': data,
+        'chainId' : 80001
+    }                   
+                                        
+    signed_tx = web3_mumbai.eth.account.sign_transaction(tx, priv)
+    print(signed_tx)
+    tx_hash = web3_mumbai.eth.sendRawTransaction(signed_tx.rawTransaction)
+    print(tx_hash)
+    
+    # get transaction hash
+    print(web3_mumbai.toHex(tx_hash))
+
+
 
         
 # ------------------ ENCODING --------------------- 
@@ -126,6 +186,7 @@ if __name__ == "__main__":
     # event_filter = contract_aave.events.ReserveDataUpdated.createFilter(fromBlock='pending')
     # asyncio.run(log_loop(event_filter, 2))
     asyncio.run(get_data())
+    # encoding()
 
 
  
