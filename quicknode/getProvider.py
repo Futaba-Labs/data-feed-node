@@ -18,7 +18,7 @@ POLYGON_TESTNET_PROVIDER = os.getenv('POLYGON_TESTNET_PROVIDER')
 def get_provider_from_chain_id(chainId):
     web3_provider = Web3(Web3.HTTPProvider(POLYGON_TESTNET_PROVIDER))
     if chainId == 10:
-        web3_provider = Web3(Web3.HTTPProvider(OPTIMISIM_PROVIDER))
+        web3_provider = Web3(Web3.HTTPProvider('https://withered-omniscient-bridge.optimism.discover.quiknode.pro/' + OPTIMISIM_PROVIDER))
     elif chainId == 1313161554:
         web3_provider = Web3(Web3.HTTPProvider(AURORA_PROVIDER))
     elif chainId == 25:
@@ -26,7 +26,7 @@ def get_provider_from_chain_id(chainId):
     elif chainId == 42262:
         web3_provider = Web3(Web3.HTTPProvider(OASIS_PROVIDER))
     elif chainId == 137:
-        web3_provider = Web3(Web3.HTTPProvider(POLYGON_PROVIDER))
+        web3_provider = Web3(Web3.HTTPProvider('https://misty-broken-water.matic.discover.quiknode.pro/' + POLYGON_PROVIDER))
 
     web3_provider.middleware_onion.inject(geth_poa_middleware, layer=0)
 
