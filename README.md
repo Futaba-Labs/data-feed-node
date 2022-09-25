@@ -42,8 +42,13 @@ We are using **Quicknode** as node provider for our Example :
 ![APY](APY.png)
 
 
+## Twitter :
+Account : [https://twitter.com/FutabaDex](https://twitter.com/FutabaDex)
 
+## Contact Information :
+Preferred contact information : You can contact the team on the address : kato_goki@andlaw.co.jp
 
-
+### More Detail :
+For more information about the project, please refer to [this](https://first-twine-2d1.notion.site/Lite-Paper-ae6f767832c6449d8fda1c74d0af9acf)
 
 
