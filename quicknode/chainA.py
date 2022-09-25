@@ -2,7 +2,7 @@ from web3 import Web3
 import asyncio
 import pandas as pd
 
-web3 = Web3(Web3.HTTPProvider("https://proportionate-multi-bridge.ethereum-goerli.discover.quiknode.pro/9b4b638c50c22e1da66f9652053a61e0c69beda3/"))
+web3 = Web3(Web3.HTTPProvider("https://proportionate-multi-bridge.ethereum-goerli.discover.quiknode.pro/<>"))
 
 
 #Goerli 
