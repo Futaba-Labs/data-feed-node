@@ -7,6 +7,8 @@ This is the official ETHOnline 2022 submission for our project Futaba 🍃.
 
 [Live Demo](https://node-dashboard-nine.vercel.app/)
 
+Deployed with Valist : [Live Valist](https://bafybeigt5bublujbxjo2wggeh3l3a6vnvrebdqbfcuwdmocqo57bzi2ase.ipfs.gateway.valist.io/)
+
 ## Project Description
 
 Futaba is a new interoperability solution that is specialized in data acquisition. Data from other chains can be used cheaply and quickly.
