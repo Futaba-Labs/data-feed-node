@@ -22,16 +22,16 @@ Futaba automaticaly listen to the event, sign and submit the information on the 
 
 We are using **Quicknode** as node provider for our Example : 
 
+- Quicknode implemetend as a provider : 
 
+![QuicknodeSM](QuicknodeSM.png)
 
 
 
 ![Quicknode](Quicknode.png)
 
 
-
 ## Future plans 
-
 
 
 ![APY](APY.png)
