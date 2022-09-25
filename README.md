@@ -5,9 +5,9 @@ This is the official ETHOnline 2022 submission for our project Futaba 🍃.
 
 ## Demo Site
 
-Web2 : Deployd with Vercel [Live Demo](https://node-dashboard-nine.vercel.app/)
+Web2  -- Deployd with Vercel [Live Demo](https://node-dashboard-nine.vercel.app/)
 
-Web3 : Deployed with Valist : [Live Valist](https://bafybeigt5bublujbxjo2wggeh3l3a6vnvrebdqbfcuwdmocqo57bzi2ase.ipfs.gateway.valist.io/)
+Web3  -- Deployed with Valist  [Live Valist](https://bafybeigt5bublujbxjo2wggeh3l3a6vnvrebdqbfcuwdmocqo57bzi2ase.ipfs.gateway.valist.io/)
 
 ## Project Description
 
