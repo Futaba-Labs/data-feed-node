@@ -4,3 +4,4 @@
 futaba-node-dashboard-test-private-key.json
 libs
 .env
+__pycache__
