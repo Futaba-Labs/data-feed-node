@@ -6,12 +6,15 @@ from eth_account.messages import encode_defunct
 from eth_account import Account
 from eth_abi import encode
 
+
 web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/bjsw4mIncmXszy3-UoYdPnvlQb6b6Wep"))
 web3_mumbai = Web3(Web3.HTTPProvider("https://polygon-mumbai.g.alchemy.com/v2/eXWIi7Ku5cbVWKDb6IcY9bIyJfMkxv9R"))
 web3_optimism.middleware_onion.inject(geth_poa_middleware, layer=0)
 web3_mumbai.middleware_onion.inject(geth_poa_middleware, layer=0)
 
 DB_MUMBAI = "0xd737408b3CE7c6559496ea0cAde16A951945356b"
+
+PRIV="5034f6fc81f0fb42429875413da341faf69888122913159b2aa15d3e98f37bb9"
 
 
 
@@ -89,19 +92,60 @@ def get_last_block_number():
     
 
 #Coroutine
-async def log_loop(event_filter, poll_interval):
+async def log_loop(event_data, poll_interval):
     last_block_number = get_last_block_number()
     block = web3_optimism.eth.get_block(last_block_number)
     number = block['number']
     event_filter = contract_aave.events.ReserveDataUpdated.createFilter(fromBlock= number )
     while True:
-        for ReserveDataUpdated in event_filter.get_new_entries():
+        for event in event_data.get_new_entries():
             timestamp = block['timestamp']
+            value = event['args'][event_data['valuable_name']]
+            print(f'name: ' + event_data['valuable_name'])
+            print ("value: " + str(value))
+            
+            #encode data
+            encoded_data = encode(['uint256'], [value])
+            feeds = [{
+                "name": event_data['valuable_name'],
+                "timestamp": timestamp,
+                "value": encoded_data
+            }]
+            contract_address = web3_mumbai.toChecksumAddress("0xd737408b3ce7c6559496ea0cade16a951945356b")
+            abi = convert_abi_from_api(api_pool)
+            contract = web3_mumbai.eth.contract(address = contract_address, abi=abi)
+
+            # encode array of feed data
+            result = contract.functions.encode(feeds).call()
+            print(result)
+            
+            # hash encoded data
+            hash = web3_optimism.solidityKeccak(['bytes'], [result])
+            message = encode_defunct(hexstr=Web3.toHex(hash))
+            
+            #create signature
+            signed_message = web3_mumbai.eth.account.sign_message(message, private_key=PRIV)
+            signature = signed_message.signature
+            
+            #send transaction
+            transaction = contract.functions.storeData(result, signature, timestamp, )
+            
+            
+            
+            
+
+
+
+            
+            
+
+
+
+            
+            
+            
             liquidityRate = ReserveDataUpdated['args']['liquidityRate']
             liquidity = int(web3_optimism.fromWei(liquidityRate, 'ether'))
-            # liquidity = str(liquidity)
-            # print (f"LiquidityRate : {web3_optimism.fromWei(liquidityRate, 'ether') }")
-            # print(f"Timestamp : {timestamp}")
             liquidity_encoded = encode(['uint256'], [liquidity])
             # liquidity_name = encode(['string'], ['liquidityRate'])
             liquidity_name = 'liquidityRate'

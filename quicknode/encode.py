@@ -5,12 +5,10 @@ import json
 from getABI import convert_abi_from_api
 from eth_utils.curried import to_hex, to_bytes
 from typing import List
+from eth_account import Account
 
 
 web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/"))
-
-
-from eth_account import Account
 
 
 def setup_variables():
@@ -40,5 +38,3 @@ def sign_message(message: str):
     
 if __name__ == '__main__':
     sign_message("tosign")
-   
- 

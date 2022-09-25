@@ -4,12 +4,12 @@ from requests import ReadTimeout
 from web3.exceptions import BlockNotFound
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
-from dotenv import load_dotenv
 
 
 #Variables 
 web3_optimism = Web3(Web3.HTTPProvider("https://opt-mainnet.g.alchemy.com/v2/"))
 web3_optimism.middleware_onion.inject(geth_poa_middleware, layer=0)
+
 
 '''
 Timestamping blocks 

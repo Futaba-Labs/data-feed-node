@@ -1,4 +1,3 @@
-
 from web3 import Web3
 import firebase_admin
 from firebase_admin import credentials
