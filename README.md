@@ -20,8 +20,19 @@ high gas fees, transactions timed consumed and unoptimized transactions.
 
 Futaba automaticaly listen to the event, sign and submit the information on the destination chain. Users can then get data saved by hitting the view function. 
 
+We are using **Quicknode** as node provider for our Example : 
+
+
+
+
 
 ![Quicknode](Quicknode.png)
+
+
+
+## Future plans 
+
+
 
 ![APY](APY.png)
 
