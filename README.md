@@ -36,7 +36,7 @@ We are using **Quicknode** as node provider for our Example :
 ![Architecture](Architecture.png)
 
 
-## Future plans 
+## Utility 
 
 
 ![APY](APY.png)
