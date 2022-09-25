@@ -5,6 +5,7 @@ import pandas as pd
 web3 = Web3(Web3.HTTPProvider("https://proportionate-multi-bridge.ethereum-goerli.discover.quiknode.pro/<>"))
 
 
+
 #Goerli 
 PoolDataProvider_Aave  = "0x9BE876c6DC42215B00d7efe892E2691C3bc35d10"
 DataProvider_Aave = web3.toChecksumAddress(PoolDataProvider_Aave)
